@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>  
+typedef enum {
+    TOKEN_NUMBER,
+    TOKEN_PLUS,
+    TOKEN_MINUS,
+    TOKEN_EOF
+} TokenType;
+typedef struct {
+    TokenType type; 
+    int value;
+} Token;  
+Token get_next_token(const char **input) {
+    while (**input == ' ') (*input)++; 
+    if (isdigit(**input)) {
+        Token token;
+        token.type = TOKEN_NUMBER;
+        token.value = strtol(*input, (char **)input, 10);
+        return token;
+    }
+    Token token;
+    switch (**input) {
+        case '+':
+            token.type = TOKEN_PLUS;
+            (*input)++;
+            return token;
+        case '-':
+            token.type = TOKEN_MINUS;
+            (*input)++;
+            return token;
+        case '\0':
+            token.type = TOKEN_EOF;
+            return token;
+        default:
+            printf("Error: Unexpected character '%c'\n", **input);
+            token.type = TOKEN_EOF;
+            return token;
+    }
+}
+int main() {
+    const char *input = "12 + 3 - 5";
+    Token token = get_next_token(&input);
+    printf("Token value: %d\n", token.value);
+    return 0;
+}
